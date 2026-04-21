@@ -156,84 +156,14 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-    <script src="./water-caustics/caustics.js"></script>
+    <script src="./clouds/clouds.js"></script>
     <script>
-        // Initialize caustics when DOM is ready (static, no animation)
+        // Initialize cloud background when DOM is ready (animated).
         window.addEventListener('load', () => {
-            initStatic('./water-caustics/').catch(error => {
-                console.error('Failed to initialize caustics:', error);
+            init('./clouds/').catch(error => {
+                console.error('Failed to initialize clouds:', error);
             });
         });
-
-        // Static version of init that only renders first frame
-        async function initStatic(shaderBasePath = '') {
-            const scene = new THREE.Scene();
-            const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-            const renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
-
-            // Load shaders
-            async function loadShader(url) {
-                const response = await fetch(url);
-                return await response.text();
-            }
-
-            const vertexShader = await loadShader(shaderBasePath + 'vertex.glsl');
-            const fragmentShader = await loadShader(shaderBasePath + 'fragment.glsl');
-
-            // Create shader material
-            const uniforms = {
-                iTime: { value: 0 },
-                iResolution: { value: new THREE.Vector3(window.innerWidth, window.innerHeight, 1) },
-                iSeed: { value: Math.random() * 1.0 },
-                waveSpeed: { value: 2.0 },
-                waveFreq: { value: 0.4 },
-                waveSharpness: { value: 0.5 },
-                waveDistortion: { value: 0.5 },
-                waveMix: { value: 0.5 },
-                loopDuration: { value: 300.0 },
-                crossfadeDuration: { value: 2.0 },
-                chromaticAberration: { value: 1.0 },
-                backgroundStrength: { value: 1.0 },
-                causticSpeed: { value: 0.25 },
-                causticOffset1: { value: 0.07 },
-                causticOffset2: { value: 0.07 },
-                causticOffset3: { value: 0.07 },
-                causticInternalScale: { value: 1.62 },
-                causticSaturation: { value: 4.0 },
-                causticIntensity: { value: 0.8 },
-                mixOffset: { value: 1.0 },
-                viewDistance: { value: 1.0 },
-                causticSize: { value: 3.0 },
-                cameraAngle: { value: 0.0 },
-                timeDrift: { value: 1.0 },
-            };
-
-            const material = new THREE.ShaderMaterial({
-                uniforms: uniforms,
-                vertexShader: vertexShader,
-                fragmentShader: fragmentShader
-            });
-
-            // Create fullscreen quad
-            const geometry = new THREE.PlaneGeometry(2, 2);
-            const mesh = new THREE.Mesh(geometry, material);
-            scene.add(mesh);
-
-            // Render once
-            renderer.render(scene, camera);
-
-            // Handle window resize - re-render on resize
-            window.addEventListener('resize', () => {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-
-                renderer.setSize(width, height);
-                uniforms.iResolution.value.set(width, height, 1);
-                renderer.render(scene, camera);
-            });
-        }
 
         // Session schedule - all times in local timezone
         const sessions = [

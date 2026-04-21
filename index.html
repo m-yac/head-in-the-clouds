@@ -138,15 +138,16 @@
             -->
 
             <div class="bottom-title">
-                <h3>The Eighth Dimension: Where the Mind Meets the Ocean</h3>
+                <h3>Head in the Clouds</h3>
                 <p class="credits">by
-                    <a href="https://www.voyowoo.com/">Voyo Woo</a>,
+                    <a href="https://www.voyowoo.com/">Voyo Woo</a> and
                     <a href="https://www.yacavone.net/">Matthew Yacavone</a>,
-                    <a href="https://www.instagram.com/nanae_itoi/">Nanae Itoi</a> and
-                    <a href="https://www.carolinamorales.com/">Carolina Morales</a>
-                </p>
-                <p class="credits">with help from
+                    with help from
                     <a href="https://jasonjsnell.com/">Jason Snell</a>
+                </p>
+                <p class="credits">
+                    Created during a 
+                    <a href="https://artfair14c.com/special-project-residency/">Special Project Residency at 14C</a>
                 </p>
                 <p class="timestamp" id="timestamp"></p>
             </div>
@@ -155,12 +156,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-    <script src="./water-caustics/caustics.js"></script>
+    <script src="./clouds/clouds.js"></script>
     <script>
-        // Initialize caustics when DOM is ready
+        // Initialize cloud background when DOM is ready
         window.addEventListener('load', () => {
-            init('./water-caustics/').catch(error => {
-                console.error('Failed to initialize caustics:', error);
+            init('./clouds/').catch(error => {
+                console.error('Failed to initialize clouds:', error);
             });
         });
     </script>
