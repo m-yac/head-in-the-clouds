@@ -348,7 +348,7 @@ function getGradientColor(value) {
     // Define three key points: 0 (purple/pink), 0.5 (blue), 1 (white)
     const points = [
         { value: 0.0, lightness: 0.6, chroma: 0.18, hue: 300 },  // lighter purple/pink
-        { value: 0.5, lightness: 0.65, chroma: 0.15, hue: 250 }, // blue
+        { value: 0.5, lightness: 0.5, chroma: 0.15, hue: 250 }, // blue
         { value: 1.0, lightness: 1.0, chroma: 0.06, hue: 250 }  // white
     ];
 

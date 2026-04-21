@@ -7,6 +7,7 @@ uniform float cloudSoftness;
 uniform float cloudScale;
 uniform vec3 skyZenith;
 uniform vec3 skyHorizon;
+uniform float skyDepth;
 uniform vec3 cloudBright;
 uniform vec3 cloudShadow;
 uniform vec2 sunDir;
@@ -47,15 +48,18 @@ float fbm(vec2 p) {
 
 // Sample cloud density on the layer. Returns 0..1 density.
 float cloudField(vec2 p, float cover) {
-    // Domain-warped fbm for puffy, billowy shapes.
+    // Light domain warp — just enough to break up straight fbm contours
+    // without making the shapes feel wiggly.
     vec2 q = vec2(fbm(p + vec2(0.0, 0.0)),
                   fbm(p + vec2(5.2, 1.3)));
-    float n = fbm(p + 2.0 * q);
+    float n = fbm(p + 1.2 * q);
 
     // Shape: subtract cover threshold; clouds appear where n > threshold.
     float thresh = 1.0 - cover;
     float edge = cloudSoftness;
-    return smoothstep(thresh, thresh + edge, n);
+    float d = smoothstep(thresh, thresh + edge, n);
+    // Power curve inflates the body of each puff while keeping soft edges.
+    return pow(d, 0.7);
 }
 
 void main() {
@@ -67,6 +71,8 @@ void main() {
     // Sky gradient (zenith -> horizon).
     float skyY = clamp(uv.y * 0.6 + 0.55, 0.0, 1.0);
     vec3 sky = mix(skyHorizon, skyZenith, pow(skyY, 1.3));
+    // skyDepth darkens the sky toward a saturated blue (keeps B, cuts R/G).
+    sky *= mix(vec3(1.0), vec3(0.35, 0.5, 0.9), clamp(skyDepth, 0.0, 1.0));
 
     // Subtle sun glow near horizon.
     vec2 sunPos = vec2(sunDir.x * 0.6, sunDir.y * 0.4);
@@ -74,13 +80,17 @@ void main() {
     sky += vec3(0.15, 0.10, 0.05) * sunGlow * 0.6;
 
     // Project screen uv onto a cloud plane above the camera.
-    // angle: 0 near bottom of frame, pi/2 near top. We bias upward so
-    // clouds sit overhead and recede toward the horizon.
-    float angle = clamp(uv.y + 0.55, 0.02, 1.0) * PI * 0.5;
-    float dist = 1.0 / sin(angle);
+    // angle: 0 = horizon, pi/2 = zenith. Bias so the frame sits upward.
+    // The clamp region (uv.y < ~-0.34) is hidden by horizonFade below.
+    float angle = clamp(uv.y * 0.9 + 0.35, 0.04, 1.5);
+    float s = sin(angle);
+    // x scales by 1/sin (perspective widening toward horizon); y uses
+    // cotangent so it stays monotonically varying all the way to the zenith.
+    float xScale = 1.0 / s;
+    float yGround = cos(angle) / s;
 
     vec2 windDrift = vec2(t * 0.04, t * 0.008);
-    vec2 cp = vec2(uv.x * dist, dist * 0.9) * cloudScale + windDrift;
+    vec2 cp = vec2(uv.x * xScale, yGround) * cloudScale + windDrift;
 
     // Two layers at different heights/scales for depth.
     float d1 = cloudField(cp, cloudCover);
@@ -101,10 +111,10 @@ void main() {
     float rim = smoothstep(0.0, 0.4, density) * (1.0 - density);
     cloudCol += vec3(0.08, 0.07, 0.05) * rim * lightTerm;
 
-    // Horizon haze: clouds fade into atmosphere near horizon.
-    float horizonFade = smoothstep(-0.35, 0.0, uv.y);
+    // Horizon haze: clouds fade into atmosphere near horizon. Pulled up
+    // high enough to hide any residual stretch in the clamped angle region.
+    float horizonFade = smoothstep(-0.3, 0.0, uv.y);
     density *= horizonFade;
-    cloudCol = mix(sky, cloudCol, 0.95);
 
     vec3 col = mix(sky, cloudCol, density);
 
