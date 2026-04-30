@@ -143,8 +143,8 @@ body > canvas {
 .fortune-message {
     display: inline-block;
     font-size: 1.4rem;
-    color: rgba(0, 0, 0, 1.0);
-    background-color: rgba(243, 243, 243, 0.9);
+    color: rgba(40, 60, 130, 1.0);
+    background-color: rgba(243, 243, 243, 0.5);
     backdrop-filter: blur(20px) saturate(1.5) !important;
     -webkit-backdrop-filter: blur(20px) saturate(1.5) !important;
     border-radius: 5px;
@@ -334,7 +334,7 @@ body > canvas {
 .wave-stat.peak-frequency {
     border: 3px solid rgba(255, 255, 255, 0.5);
     background-color: rgba(255, 255, 255, 0.08);
-    padding-bottom: 3rem;
+    /* padding-bottom: 3rem; */
     box-shadow: inset 0 0 0 1px currentColor;
 }
 
@@ -371,10 +371,10 @@ body > canvas {
 }
 
 .wave-stat.peak-frequency .peak-label {
-    position: absolute;
+    /* position: absolute;
     bottom: 0.5rem;
     left: 0.5rem;
-    right: 0.5rem;
+    right: 0.5rem; */
     font-size: 0.75rem;
     line-height: 1.3;
     color: rgba(255, 255, 255, 0.8);
@@ -400,6 +400,7 @@ body > canvas {
     font-size: 0.9rem;
     line-height: 1.3;
     font-weight: 500;
+    margin-bottom: 1rem;
 }
 
 .wave-viz {
@@ -535,6 +536,7 @@ body > canvas {
     .wave-description, .analysis-description {
         font-size: 0.8rem;
         line-height: 1.2;
+        margin-bottom: 0;
     }
     
     .brainwave-section, .ml-section {
